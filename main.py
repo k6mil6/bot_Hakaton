@@ -1,12 +1,9 @@
-from aiogram import Bot, Dispatcher, executor
-import asyncio
+from aiogram import executor
+from bot_creation import dp
 
-from config import TOKEN
-
-loop = asyncio.new_event_loop()
-bot = Bot(TOKEN, parse_mode='HTML')
-dp = Dispatcher(bot, loop=loop)
 
 if __name__ == '__main__':
-    from handlers.admin import dp
-    executor.start_polling(dp)
+    from handlers import user, admin, scheduled_tasks
+    user.register_handlers_user(dp)
+    admin.register_handlers_admin(dp)
+    executor.start_polling(dp, skip_updates=True)

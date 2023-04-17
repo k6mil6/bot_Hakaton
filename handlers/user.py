@@ -1,10 +1,14 @@
-from aiogram import types 
-from main import bot, dp
+from aiogram.types import Message
+from aiogram.dispatcher.filters import Command
+from aiogram import Dispatcher
+
+from bot_creation import bot, dp
 
 exception_message = 'Для получения информации начните общение с ботом: \nhttps://t.me/ttteamUp_Bot'
-# user
-@dp.message_handler(commands=['start'])
-async def command_start(message : types.Message):
+
+
+# @dp.message_handler(Command('start'))
+async def command_start(message : Message):
     try:
         # Здесь необходима проверка на наличие в БД, также развилка на создание персонажа и тд.
         await bot.send_message(message.from_user.id, 'Приветствую тебя путник! ')
@@ -13,11 +17,16 @@ async def command_start(message : types.Message):
         await message.reply(exception_message)
 
 
-@dp.message_handler(commands=['help'])
-async def command_help(message : types.Message):
+# @dp.message_handler(Command('help'))
+async def command_help(message : Message):
     try:
         # добавить правила
         await bot.send_message(message.from_user.id, 'Видно ты заплутал совсем, друже ниже перечислены правила нашего мира')
         await message.delete()
     except:
         await message.reply(exception_message)
+
+
+def register_handlers_user(dp: Dispatcher):
+    dp.register_message_handler(command_start, Command('start'))
+    dp.register_message_handler(command_help, Command('help'))
