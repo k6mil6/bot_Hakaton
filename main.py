@@ -1,10 +1,11 @@
+import datetime
+
 from aiogram import executor
 from bot_creation import dp
 import asyncio
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
     from handlers import user, admin, scheduled_tasks
     user.register_handlers_user(dp)
     admin.register_handlers_admin(dp)
