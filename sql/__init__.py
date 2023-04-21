@@ -1,1 +1,1 @@
-import postgre_db
+from sql import postgre_db

@@ -1,8 +1,11 @@
 import asyncio
+
 import aioschedule
 
 from bot_creation import bot
 from config import chat_id
+from sql.postgre_db import sql_start
+
 
 async def send_task_everyday():
     # Сделать БД с заданиями
@@ -10,10 +13,11 @@ async def send_task_everyday():
     await bot.send_message(chat_id, everyday_message)
 
 async def scheduled():
-    aioschedule.every().day.at("21:44").do(send_task_everyday)
+    aioschedule.every().day.at("11:31").do(send_task_everyday)
     while True:
         await aioschedule.run_pending()
         await asyncio.sleep(1)
 
 async def on_startup(_):
+    sql_start()
     asyncio.create_task(scheduled())
