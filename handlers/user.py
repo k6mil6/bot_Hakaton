@@ -1,18 +1,11 @@
 from aiogram import Dispatcher
 from aiogram.dispatcher.filters import Command
 from aiogram.types import Message
-from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters.state import State, StatesGroup
 
 from sql.postgre_db import add_user, is_not_existed, get_user_rating, get_users_ratings
 from bot_creation import bot
 
 exception_message = "Для получения информации начните общение с ботом: \nhttps://t.me/ttteamUp_Bot"
-
-class FSMAdmin(StatesGroup):
-    photo = State()
-    task_description = State()
-    reward = State()
 
 async def command_start(message : Message):
     if message.chat.type == 'private':
@@ -26,8 +19,8 @@ async def command_start(message : Message):
 
 async def command_best_participants(message : Message):
     try:
-        await get_users_ratings()
-        await bot.send_message(message.from_user.id, "Топ 10 лучших: \n")
+        top = await get_users_ratings()
+        await bot.send_message(message.from_user.id, f"Топ 10 лучших: \n{top}")
         await message.delete()
     except:
         await message.reply(exception_message)

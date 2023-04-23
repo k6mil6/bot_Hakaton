@@ -19,7 +19,7 @@ async def cm_start(message: Message):
         admins_id = admins.user.id
     if message.from_user.id == admins_id and message.chat.type == 'private':
         await FSMAdmin.photo.set()
-        await message.answer("Загрузите фото (если нет - отправьте -)")
+        await message.answer("Загрузите фото (если нет - отправьте -) \nДля отмены напишите - /cancel или отмена")
 
 async def load_photo(message: Message, state: FSMContext):
     if message.photo:
