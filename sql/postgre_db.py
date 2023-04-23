@@ -14,9 +14,25 @@ def sql_start():
     cur = base.cursor()
     if base:
         print("Data base has been connected!")
-    cur.execute("""CREATE TABLE IF NOT EXISTS users(user_id INT PRIMARY KEY, class TEXT, rating INT)""")
+    cur.execute("CREATE TABLE IF NOT EXISTS users(user_id INT PRIMARY KEY, rating INT)")
     base.commit()
 
-def add_user(user_id):
-    if cur.execute("""SELECT IF NOT EXISTS (SELECT * FROM a.users WHERE user_id = ?)"""):
-        cur.execute(""" """)
+
+async def is_not_existed(user_id):
+    cur.execute("SELECT NOT EXISTS(SELECT * FROM users WHERE user_id = %s)", [user_id])
+    result = cur.fetchone()
+    return result[0]
+
+async def get_user_rating(user_id):
+    cur.execute("SELECT rating FROM users WHERE user_id = %s", [user_id])
+    return cur.fetchone()[0]
+
+async def get_users_ratings():
+    cur.execute("SELECT user_id, rating FROM users")
+    users_with_ratings = cur.fetchmany(10)
+    print(users_with_ratings)
+
+
+async def add_user(user_id):
+    cur.execute("INSERT INTO users(user_id, rating) VALUES(%s, '1000')", [user_id])
+    base.commit()

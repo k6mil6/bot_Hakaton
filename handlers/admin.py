@@ -17,7 +17,7 @@ async def cm_start(message: Message):
     chat_admins = await bot.get_chat_administrators(chat_id)
     for admins in chat_admins:
         admins_id = admins.user.id
-    if message.from_user.id == admins_id:
+    if message.from_user.id == admins_id and message.chat.type == 'private':
         await FSMAdmin.photo.set()
         await message.answer("Загрузите фото (если нет - отправьте -)")
 
@@ -52,9 +52,9 @@ async def cancel_handler(message: Message, state: FSMContext):
     await message.answer("Отменено") 
 
 def register_handlers_admin(dp: Dispatcher):
+    dp.register_message_handler(cancel_handler, Command('cancel'), state="*")
+    dp.register_message_handler(cancel_handler, Text(equals='отмена', ignore_case=True), state="*")
     dp.register_message_handler(cm_start, Command('sendtask'))
     dp.register_message_handler(load_photo, state=FSMAdmin.photo)
     dp.register_message_handler(load_description, state=FSMAdmin.task_description)
     dp.register_message_handler(load_reward, state=FSMAdmin.reward)
-    dp.register_message_handler(cancel_handler, Command('cancel'), state="*")
-    dp.register_message_handler(cancel_handler, Text(equals='отмена', ignore_case=True), state="*")
