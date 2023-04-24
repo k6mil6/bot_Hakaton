@@ -2,16 +2,17 @@ import psycopg2
 
 from sql.db_config import host, database, username, pwd, port_id
 from bot_creation import bot
-from config import chat_id
+from config import CHAT_ID, DB_LINK
 
 def sql_start():
     global base, cur
-    base = psycopg2.connect(
-            host=host,
-            dbname=database, 
-            user=username,
-            password=pwd,
-            port=port_id)
+    # base = psycopg2.connect(
+    #         host=host,
+    #         dbname=database, 
+    #         user=username,
+    #         password=pwd,
+    #         port=port_id)
+    base = psycopg2.connect(DB_LINK)
     
     cur = base.cursor()
     if base:
@@ -36,7 +37,7 @@ async def get_users_ratings():
     top = ""
     place = 0
     for i in users_with_ratings:
-        user = await bot.get_chat_member(chat_id, i)
+        user = await bot.get_chat_member(CHAT_ID, i)
         nickname = user.user.first_name
         place+=1
         top += "\n" + f"{place}) " + str(nickname) + " - " + str(users_with_ratings[i])

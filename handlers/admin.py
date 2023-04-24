@@ -5,7 +5,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
 from bot_creation import bot, dp
-from config import chat_id
+from config import CHAT_ID
 from sql.postgre_db import add_task, get_tasks, get_last_task
 
 ADMINS_ID = None
@@ -17,7 +17,7 @@ class FSMAdmin(StatesGroup):
     reward = State()
 
 async def cm_start(message: Message):
-    chat_admins = await bot.get_chat_administrators(chat_id)
+    chat_admins = await bot.get_chat_administrators(CHAT_ID)
     for admins in chat_admins:
         ADMINS_ID = admins.user.id
     if message.from_user.id == ADMINS_ID and message.chat.type == 'private':
@@ -51,9 +51,9 @@ async def load_reward(message: Message, state: FSMContext):
         task = await get_last_task()
         task_message = f"{task[1]}\nОписание: {task[2]} \nНаграда: {task[3]}"
         if task[0] == "":
-            await bot.send_message(chat_id, task_message)
+            await bot.send_message(CHAT_ID, task_message)
         else:
-            await bot.send_photo(chat_id, task[0], task_message)
+            await bot.send_photo(CHAT_ID, task[0], task_message)
 
     except Exception as ex:
         await message.answer("Неверно указан рейтинг!")

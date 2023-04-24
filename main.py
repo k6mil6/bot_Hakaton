@@ -1,8 +1,16 @@
-from aiogram import executor
+import asyncio
 import subprocess
-from bot_creation import dp
 
-subprocess.check_call(["pip", "install", "-r", "requirements.txt"])
+from aiogram import executor
+
+from bot_creation import dp, bot
+
+
+
+# subprocess.check_call(["pip", "install", "-r", "requirements.txt"])
+
+
+    
 
 if __name__ == '__main__':
     from handlers import admin, scheduled_tasks, user

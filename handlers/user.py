@@ -27,7 +27,7 @@ async def command_best_participants(message : Message):
 
 async def command_help(message : Message):
     try:
-        await bot.send_message(message.from_user.id, "Видно ты заплутал совсем, друже ниже перечислены правила нашего мира")
+        await bot.send_message(message.from_user.id, "Основные команды: \n/top - топ игроков")
         await message.delete()
     except:
         await message.reply(exception_message)
