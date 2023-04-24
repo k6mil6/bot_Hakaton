@@ -6,7 +6,6 @@ from bot_creation import bot
 from config import chat_id
 from sql.postgre_db import sql_start
 
-
 async def send_task_everyday():
     # Сделать БД с заданиями
     everyday_message = 'QQ'

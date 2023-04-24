@@ -27,7 +27,6 @@ async def command_best_participants(message : Message):
 
 async def command_help(message : Message):
     try:
-        # добавить правила
         await bot.send_message(message.from_user.id, "Видно ты заплутал совсем, друже ниже перечислены правила нашего мира")
         await message.delete()
     except:

@@ -17,7 +17,7 @@ def sql_start():
     if base:
         print("Data base has been connected!")
     cur.execute("CREATE TABLE IF NOT EXISTS users(user_id INT8 PRIMARY KEY, rating INT)")
-    cur.execute("CREATE TABLE IF NOT EXISTS tasks(id SERIAL PRIMARY KEY, img TEXT, description TEXT, rating INT)")
+    cur.execute("CREATE TABLE IF NOT EXISTS tasks(id SERIAL PRIMARY KEY, created_at TIMESTAMP DEFAULT NOW(), img TEXT, name TEXT, description TEXT, rating INT)")
     base.commit()
 
 
@@ -43,6 +43,16 @@ async def get_users_ratings():
 
     return top
 
+async def get_tasks():
+    cur.execute("SELECT img, name, description, rating FROM tasks")
+    tasks = cur.fetchmany(5)
+    return tasks
+
+async def get_last_task():
+    cur.execute("SELECT img, name, description, rating FROM tasks ORDER BY id DESC")
+    task = cur.fetchone()
+    return task
+    
 
 async def add_user(user_id):
     cur.execute("INSERT INTO users(user_id, rating) VALUES(%s, '0')", [user_id])
@@ -50,5 +60,13 @@ async def add_user(user_id):
 
 async def add_task(state):
     async with state.proxy() as data:
-        cur.execute("INSERT INTO tasks(img, description, rating) VALUES(%s, %s, %s)", list(data.values()))
-        base.commit
+        cur.execute("INSERT INTO tasks(img, name, description, rating) VALUES(%s, %s, %s, %s)", list(data.values()))
+        base.commit()
+
+    cur.execute("SELECT COUNT(*) FROM tasks")
+    count = cur.fetchone()[0]
+    if count > 5:
+        cur.execute("DELETE FROM tasks WHERE created_at = (SELECT MIN(created_at) FROM tasks)")
+        base.commit()
+
+        
