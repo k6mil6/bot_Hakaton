@@ -4,6 +4,7 @@ from aiogram.types import Message
 
 from sql.postgre_db import add_user, is_not_existed, get_user_rating, get_users_ratings
 from bot_creation import bot
+from handlers.admin import check_admins
 
 exception_message = "Для получения информации начните общение с ботом: \nhttps://t.me/ttteamUp_Bot"
 
@@ -27,8 +28,16 @@ async def command_best_participants(message : Message):
 
 async def command_help(message : Message):
     try:
-        await bot.send_message(message.from_user.id, "Основные команды: \n/top - топ игроков")
-        await message.delete()
+        admin_id = await check_admins()
+        if message.from_user.id == admin_id:
+            await bot.send_message(message.from_user.id, "Основные команды: \n/start - посмотреть текущий рейтинг \n/top - топ игроков \n/tasks - последние задания \
+                                                          \n/sendtask - отправить задание \n/cancel - отменить отправку")
+            await message.delete()
+
+
+        else:
+            await bot.send_message(message.from_user.id, "Основные команды: \n/start - посмотреть текущий рейтинг \n/top - топ игроков")
+            await message.delete()
     except:
         await message.reply(exception_message)
 

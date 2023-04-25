@@ -6,6 +6,9 @@ from bot_creation import bot
 from config import CHAT_ID
 from sql.postgre_db import sql_start
 
+
+
+
 async def send_task_everyday():
     everyday_message = 'QQ'
     await bot.send_message(CHAT_ID, everyday_message)
@@ -15,7 +18,5 @@ async def scheduled():
     while True:
         await aioschedule.run_pending()
         await asyncio.sleep(1)
-async def on_startup(_):
-    sql_start()
-    asyncio.create_task(scheduled())
+
 

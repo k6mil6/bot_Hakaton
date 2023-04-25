@@ -8,7 +8,7 @@ from bot_creation import bot, dp
 from config import CHAT_ID
 from sql.postgre_db import add_task, get_tasks, get_last_task
 
-ADMINS_ID = None
+
 
 class FSMAdmin(StatesGroup):
     photo = State()
@@ -16,11 +16,16 @@ class FSMAdmin(StatesGroup):
     task_description = State()
     reward = State()
 
-async def cm_start(message: Message):
+async def check_admins():
     chat_admins = await bot.get_chat_administrators(CHAT_ID)
+    admins_id = 0
     for admins in chat_admins:
-        ADMINS_ID = admins.user.id
-    if message.from_user.id == ADMINS_ID and message.chat.type == 'private':
+        admins_id = admins.user.id
+    return admins_id
+
+async def cm_start(message: Message):
+    admin_id = await check_admins()
+    if message.from_user.id == admin_id and message.chat.type == 'private':
         await FSMAdmin.photo.set()
         await message.answer("Загрузите фото (если нет - напишите: пропустить или /skip) \nДля отмены напишите - /cancel или отмена")
 
@@ -59,15 +64,16 @@ async def load_reward(message: Message, state: FSMContext):
         await message.answer("Неверно указан рейтинг!")
         print(ex)
 
-async def send_tasks(message: Message):
-    
-    tasks = await get_tasks()
-    for i in tasks:
-        task_message = f"{i[1]}\nОписание: {i[2]} \nНаграда: {i[3]}"
-        if i[0] == "":
-            await bot.send_message(message.from_user.id, task_message)
-        else:
-            await bot.send_photo(message.from_user.id, i[0], task_message)
+async def send_task_list(message: Message):
+    admin_id = await check_admins()
+    if message.from_user.id == admin_id and message.chat.type == 'private':
+        tasks = await get_tasks()
+        for i in tasks:
+            task_message = f"{i[1]}\nОписание: {i[2]} \nНаграда: {i[3]}"
+            if i[0] == "":
+                await bot.send_message(message.from_user.id, task_message)
+            else:
+                await bot.send_photo(message.from_user.id, i[0], task_message)
 
 async def cancel_handler(message: Message, state: FSMContext):
     current_state = await state.get_state()
@@ -92,4 +98,4 @@ def register_handlers_admin(dp: Dispatcher):
     dp.register_message_handler(load_name, state=FSMAdmin.name)
     dp.register_message_handler(load_description, state=FSMAdmin.task_description)
     dp.register_message_handler(load_reward, state=FSMAdmin.reward)
-    dp.register_message_handler(send_tasks, Command('tasks'))
+    dp.register_message_handler(send_task_list, Command('tasks'))
