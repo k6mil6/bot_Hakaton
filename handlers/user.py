@@ -2,9 +2,9 @@ from aiogram import Dispatcher
 from aiogram.dispatcher.filters import Command
 from aiogram.types import Message
 
-from sql.postgre_db import add_user, is_not_existed, get_user_rating, get_users_ratings
 from bot_creation import bot
 from handlers.admin import check_admins
+from sql.postgre_db import add_user, get_user_rating, get_users_ratings, is_not_existed
 
 exception_message = "Для получения информации начните общение с ботом: \nhttps://t.me/ttteamUp_Bot"
 
@@ -33,7 +33,6 @@ async def command_help(message : Message):
             await bot.send_message(message.from_user.id, "Основные команды: \n/start - посмотреть текущий рейтинг \n/top - топ игроков \n/tasks - последние задания \
                                                           \n/sendtask - отправить задание \n/cancel - отменить отправку")
             await message.delete()
-
 
         else:
             await bot.send_message(message.from_user.id, "Основные команды: \n/start - посмотреть текущий рейтинг \n/top - топ игроков")

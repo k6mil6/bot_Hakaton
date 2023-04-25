@@ -3,12 +3,10 @@ import subprocess
 
 from aiogram import executor
 
-from bot_creation import dp, bot
+from bot_creation import bot, dp
+from config import CHAT_ID
 from handlers import admin, scheduled_tasks, user
 from sql.postgre_db import sql_start
-from config import CHAT_ID
-
-
 
 # subprocess.check_call(["pip", "install", "-r", "requirements.txt"])
 
