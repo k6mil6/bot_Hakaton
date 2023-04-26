@@ -1,12 +1,14 @@
 from aiogram import Dispatcher
 from aiogram.dispatcher.filters import Command, Text
-from aiogram.types import Message, InputMediaPhoto
+from aiogram.types import Message
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
 from bot_creation import bot, dp
 from config import CHAT_ID
 from sql.postgre_db import add_task, get_tasks, get_last_task
+from keyboards.admin_keyboard import get_markup_for_managing
+from keyboards.user_keyboard import get_markup_for_submition
 
 
 
@@ -55,10 +57,11 @@ async def load_reward(message: Message, state: FSMContext):
         await state.finish()
         task = await get_last_task()
         task_message = f"{task[1]}\nОписание: {task[2]} \nНаграда: {task[3]}"
+        submition_markup = get_markup_for_submition()
         if task[0] == "":
-            await bot.send_message(CHAT_ID, task_message)
+            await bot.send_message(CHAT_ID, task_message, reply_markup=submition_markup)
         else:
-            await bot.send_photo(CHAT_ID, task[0], task_message)
+            await bot.send_photo(CHAT_ID, task[0], task_message, reply_markup=submition_markup)
 
     except Exception as ex:
         await message.answer("Неверно указан рейтинг!")
@@ -69,11 +72,12 @@ async def send_task_list(message: Message):
     if message.from_user.id == admin_id and message.chat.type == 'private':
         tasks = await get_tasks()
         for i in tasks:
+            managing_markup = get_markup_for_managing(i[1])
             task_message = f"{i[1]}\nОписание: {i[2]} \nНаграда: {i[3]}"
             if i[0] == "":
-                await bot.send_message(message.from_user.id, task_message)
+                await bot.send_message(message.from_user.id, task_message, reply_markup=managing_markup)
             else:
-                await bot.send_photo(message.from_user.id, i[0], task_message)
+                await bot.send_photo(message.from_user.id, i[0], task_message, reply_markup=managing_markup)
 
 async def cancel_handler(message: Message, state: FSMContext):
     current_state = await state.get_state()

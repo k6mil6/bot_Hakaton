@@ -1,6 +1,9 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
-def submit_task_markup():
-    markup_for_task_submition = InlineKeyboardMarkup().add(InlineKeyboardButton("Отправить подтверждение", callback_data='submit'))
-    return markup_for_task_submition
+def get_markup_for_submition():
+    return InlineKeyboardMarkup().add(InlineKeyboardButton("Откликнуться", callback_data='submit'))
+
+def get_markup_for_acception():
+    return InlineKeyboardMarkup().add(InlineKeyboardButton("Подтвердить", callback_data='confirm'))
+    
