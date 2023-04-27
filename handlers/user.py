@@ -83,8 +83,8 @@ async def load_description_confirmation(message: Message, state: FSMContext):
 
 
 def register_handlers_user(dp: Dispatcher):
-    dp.register_callback_query_handler(task_submition, 'submit' )
-    dp.register_callback_query_handler(task_confirmation, 'confirm')
+    dp.register_callback_query_handler(task_submition, lambda c: c.data == 'submit')
+    dp.register_callback_query_handler(task_confirmation, lambda c: c.data == 'confirm')
     dp.register_message_handler(command_start, Command('start'))
     dp.register_message_handler(command_help, Command('help'))
     dp.register_message_handler(command_best_participants, Command('top'))

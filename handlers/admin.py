@@ -1,10 +1,10 @@
 from aiogram import Dispatcher
 from aiogram.dispatcher.filters import Command, Text
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
-from bot_creation import bot, dp
+from bot_creation import bot
 from config import CHAT_ID
 from sql.postgre_db import add_task, get_tasks, get_last_task
 from keyboards.admin_keyboard import get_markup_for_managing
@@ -92,6 +92,14 @@ async def skip_handler(message: Message, state: FSMContext):
     await FSMAdmin.next()
     await message.answer("Введите имя задания")
 
+async def delete_user_prof(callback_query: CallbackQuery):
+    await callback_query.message.delete()
+    await callback_query.answer()
+
+async def accept_user_prof(callback_query: CallbackQuery):
+    
+    await callback_query.answer()
+
 def register_handlers_admin(dp: Dispatcher):
     dp.register_message_handler(cancel_handler, Command('cancel'), state="*")
     dp.register_message_handler(cancel_handler, Text(equals='отмена', ignore_case=True), state="*")
@@ -103,3 +111,4 @@ def register_handlers_admin(dp: Dispatcher):
     dp.register_message_handler(load_description, state=FSMAdmin.task_description)
     dp.register_message_handler(load_reward, state=FSMAdmin.reward)
     dp.register_message_handler(send_task_list, Command('tasks'))
+    dp.register_callback_query_handler(delete_user_prof,lambda c: c.data == 'delete')
