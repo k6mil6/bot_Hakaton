@@ -6,7 +6,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 
 from bot_creation import bot
 from config import CHAT_ID
-from sql.postgre_db import add_task, get_tasks, get_last_task
+from sql.postgre_db import add_task, get_tasks, get_last_task, add_rating_to_user
 from keyboards.admin_keyboard import get_markup_for_managing
 from keyboards.user_keyboard import get_markup_for_submition
 
@@ -97,10 +97,16 @@ async def delete_user_prof(callback_query: CallbackQuery):
     await callback_query.answer()
 
 async def accept_user_prof(callback_query: CallbackQuery):
-    
+    cur_task = await get_last_task()
+    rating = cur_task[3]
+    user_id = callback_query.message.from_user.id
+    await add_rating_to_user(rating, user_id)
+    await callback_query.message.delete()
     await callback_query.answer()
 
 def register_handlers_admin(dp: Dispatcher):
+    dp.register_callback_query_handler(delete_user_prof, lambda c: c.data == 'delete')
+    dp.register_callback_query_handler(accept_user_prof, lambda c: c.data == 'accept')
     dp.register_message_handler(cancel_handler, Command('cancel'), state="*")
     dp.register_message_handler(cancel_handler, Text(equals='отмена', ignore_case=True), state="*")
     dp.register_message_handler(skip_handler, Text(equals='пропустить', ignore_case=True), state=FSMAdmin.photo)
@@ -111,4 +117,3 @@ def register_handlers_admin(dp: Dispatcher):
     dp.register_message_handler(load_description, state=FSMAdmin.task_description)
     dp.register_message_handler(load_reward, state=FSMAdmin.reward)
     dp.register_message_handler(send_task_list, Command('tasks'))
-    dp.register_callback_query_handler(delete_user_prof,lambda c: c.data == 'delete')

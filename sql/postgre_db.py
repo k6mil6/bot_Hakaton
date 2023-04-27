@@ -53,7 +53,7 @@ async def get_last_task():
     cur.execute("SELECT img, name, description, rating FROM tasks ORDER BY id DESC")
     task = cur.fetchone()
     return task
-    
+ 
 
 async def add_user(user_id):
     cur.execute("INSERT INTO users(user_id, rating) VALUES(%s, '0')", [user_id])
@@ -63,11 +63,14 @@ async def add_task(state):
     async with state.proxy() as data:
         cur.execute("INSERT INTO tasks(img, name, description, rating) VALUES(%s, %s, %s, %s)", list(data.values()))
         base.commit()
-
     cur.execute("SELECT COUNT(*) FROM tasks")
     count = cur.fetchone()[0]
     if count > 5:
         cur.execute("DELETE FROM tasks WHERE created_at = (SELECT MIN(created_at) FROM tasks)")
         base.commit()
 
-        
+async def add_rating_to_user(rating: int, user_id):
+    data = (rating, user_id)
+    print(data)
+    cur.execute("UPDATE users SET rating = rating + %s WHERE user_id = %s", data)
+    base.commit()

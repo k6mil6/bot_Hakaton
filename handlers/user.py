@@ -41,11 +41,11 @@ async def command_help(message : Message):
         if message.from_user.id == admin_id:
             await bot.send_message(message.from_user.id, "Основные команды: \n/start - посмотреть текущий рейтинг \n/top - топ игроков \n/tasks - последние задания \
                                                           \n/sendtask - отправить задание \n/cancel - отменить отправку")
-            await message.delete()
+            # await message.delete()
 
         else:
             await bot.send_message(message.from_user.id, "Основные команды: \n/start - посмотреть текущий рейтинг \n/top - топ игроков")
-            await message.delete()
+            # await message.delete()
     except:
         await message.reply(exception_message)
 
